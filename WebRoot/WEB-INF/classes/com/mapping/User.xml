@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.UserDAO">
+
+	<resultMap type="com.entity.User" id="BaseResultMap">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="username" property="username" jdbcType="VARCHAR" />
+		<result column="userpassword" property="userpassword" jdbcType="VARCHAR" />
+		<result column="realname" property="realname" jdbcType="VARCHAR" />
+		<result column="sex" property="sex" jdbcType="VARCHAR" />
+		<result column="tel" property="tel" jdbcType="VARCHAR" />
+		<result column="delstatus" property="delstatus" jdbcType="VARCHAR" />
+		<result column="usertype" property="usertype" jdbcType="VARCHAR" />
+	</resultMap>
+
+
+	<!-- 用户登录的验证  -->
+	<select id="selectOne" resultMap="BaseResultMap">
+		select * from user where username = #{username} and userpassword =
+		#{userpassword}
+	</select>
+
+	<!-- 通过id搜索用户信息 -->
+	<select id="findById" resultType="User" parameterType="int">
+		select *
+		from user where id=#{id}
+	</select>
+
+	<!-- 更改用户信息 -->
+	<update id="update" parameterType="User">
+		update user set
+		realname=#{realname},sex=#{sex},tel=#{tel} where id=#{id}
+	</update>
+
+	<!-- 更改用户密码 -->
+	<update id="updatepwd">
+		update user set userpassword=#{1} where
+		id=#{0}
+	</update>
+
+	<!-- 搜索所有非管理员用户 -->
+	<select id="selectAll" resultMap="BaseResultMap">
+		select * from user where
+		usertype!='管理员' order by id desc
+	</select>
+
+	<insert id="add">
+		insert into user
+		values(null,#{username},#{userpassword},#{realname},#{sex},#{tel},0,#{usertype})
+	</insert>
+
+	<select id="usernamecheck" parameterType="String" resultMap="BaseResultMap">
+		select * from user where username =#{username}
+	</select>
+
+	<!-- 模糊查询（用户名或真实姓名）用户 -->
+	<select id="searchUser" parameterType="String" resultMap="BaseResultMap">
+		select * from user where usertype!='管理员' and (username like "%"#{0}"%" or
+		realname like "%"#{0}"%") order by id desc
+	</select>
+
+	<update id="userEdit" parameterType="User">
+		update user set realname=#{realname},sex=#{sex},tel=#{tel} where id=#{id}
+	</update>
+
+
+	<delete id="deleteUser" parameterType="int">
+		delete from user where id=#{id}
+	</delete>
+
+
+
+
+
+</mapper>
+
